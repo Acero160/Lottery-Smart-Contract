@@ -1,7 +1,4 @@
 
-
----
-
 # CryptoLotto - Decentralized Lottery Smart Contract
 
 Welcome to **CryptoLotto**, a decentralized lottery built on Ethereum using smart contracts. This project leverages blockchain technology to create a transparent, secure, and trustless lottery system. Users can participate in the lottery by purchasing tokens, which are used to buy tickets. The lottery is fully automated, ensuring fairness and transparency in drawing the winner.
