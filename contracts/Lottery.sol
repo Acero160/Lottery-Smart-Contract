@@ -109,12 +109,7 @@ contract Lottery is ERC20, Ownable {
         payable(winnerAddress).transfer(address(this).balance*90/100);
         payable(owner()).transfer(address(this).balance);
     }
-
-
 }
-
-
-
 
 
 
@@ -130,9 +125,6 @@ contract  NFTs is ERC721 {
     }
 
 }
-
-
-
 
 
 contract Tickets {
@@ -154,6 +146,5 @@ contract Tickets {
         require(msg.sender == userData.lotteryContract, "You dont have permissions");
         NFTs(userData.NFTContract).safeMint(_owner, _ticketID);
     }
-
 
 }
