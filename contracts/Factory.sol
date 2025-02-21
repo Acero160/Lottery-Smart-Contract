@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-//Fabrica de smart contracts
-
+// Smart contract factory
 contract Factory {
     mapping (address => address) public user_contract;
     function factory() public {
