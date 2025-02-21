@@ -21,7 +21,7 @@ contract Lottery is ERC20, Ownable {
 
 
     constructor() ERC20("CryptoLotto", "CRLTT") Ownable (msg.sender) {
-        //Minteamos los tokens al smart contract de la loteria
+        // Mint tokens to the lottery smart contract
         _mint(address(this), 10000);
         nft = address(new NFTs());
     }
@@ -49,14 +49,14 @@ contract Lottery is ERC20, Ownable {
         if(user_contract[msg.sender] == address(0)){
             userRegister();
         }
-        //Comprobamos que el contrato tenga tokens suficientes
+        //Check that the contract has enough tokens
         require (balanceOf(address(this))>= _numTokens, "Not enough tokens");
         
-        //Comprobamos que tenga el usuario saldo suficiente para comprar
+        // Check that the user has enough balance to purchase
         uint price = tokenPrice(_numTokens);
         require (msg.value >= price, "Not enough ethers");
 
-        //si pasamos las comprobaciones, ya podemos comprar tokens
+        // If the checks pass, we can proceed to purchase tokens
         uint returnValue = msg.value - price;
         payable(msg.sender).transfer(returnValue);
 
@@ -68,44 +68,44 @@ contract Lottery is ERC20, Ownable {
     }
     
     function buyTicket (uint _numTickets) public {
-        //calculamos el precio de los tickets que vaya a comprar
+        // Calculate the price of the tickets the user is going to purchase
         uint totalPrice = _numTickets*ticketPrice();
-        //comprobamos si tiene dinero suficiente
+        //Check if the user has enough money
         require(balanceOf(msg.sender)>= totalPrice);
 
-        //Se transfiere los tokens 
+        // Tokens are transferred
         _transfer(msg.sender, address(this), totalPrice);
 
-        //Genera el numero random del ticket(el %10000, es para que nos salga del 1 al 9999(tickets))
+        // Generates the random number for the ticket (the %10000 is to ensure it ranges from 1 to 9999 (tickets))
         for (uint i=0; i< _numTickets; i++){
             uint random = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, i)))% 10000;
-            //Minteamos el ticket
+            //Mint token
             Tickets(user_contract[msg.sender]).mintTicket(msg.sender, random);
             purchasedTickets.push(random);
-            //Asignamos ticket al usuario
+            // Assign the ticket to the user
             user_ticketID[msg.sender].push(random);
             ticketID_user[random] = msg.sender;
         }
     }
 
-    //Funcion para ver los tickets que tiene cada usuario
+    // Function to see the tickets each user has
     function viewTickets(address _owner) public view returns(uint[]memory) {
         return user_ticketID[_owner];
     }
 
     function generateWinner() public onlyOwner {
-        //comprobamos que el usuario haya comprado tickets
+        // Check if the user has purchased tickets
         uint len = purchasedTickets.length;
         require(len > 0, "No tickets purchased");
 
         uint random = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender)))%len;
 
-        //gerenamos ganador
+        //Generate winner
         uint winnerTicket = purchasedTickets[random];
         winnerAddress = ticketID_user[winnerTicket];
 
-        //Damos el 90% del premio al ganador de la loteria, y el 10 por ciento para el owner, 
-        //ya que ha sido el que ha realizado el trabajo de la loteria
+        //We give 90% of the prize to the lottery winner and 10% to the owner,  
+        // as the owner has been the one to organize the lottery
         payable(winnerAddress).transfer(address(this).balance*90/100);
         payable(owner()).transfer(address(this).balance);
     }
